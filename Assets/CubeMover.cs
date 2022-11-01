@@ -16,16 +16,20 @@ public class CubeMover : MonoBehaviour {
 
 	// every rendered frame
 	public void Update() {
+		// local function
+		void TestInput( KeyCode key, Vector3 dir ) {
+			if( Input.GetKey( key ) )
+				acc += dir;
+		}
+
 		acc = Vector3.zero;
-		if( Input.GetKey( KeyCode.W ) )
-			acc += Vector3.up;
-		if( Input.GetKey( KeyCode.S ) )
-			acc += Vector3.down;
-		if( Input.GetKey( KeyCode.A ) )
-			acc += Vector3.left;
-		if( Input.GetKey( KeyCode.D ) )
-			acc += Vector3.right;
-		acc = acc.normalized * playerAccMagnitude;
+		TestInput( KeyCode.W, Vector3.up );
+		TestInput( KeyCode.S, Vector3.down );
+		TestInput( KeyCode.A, Vector3.left );
+		TestInput( KeyCode.D, Vector3.right );
+
+		if( acc != Vector3.zero )
+			acc = acc.normalized * playerAccMagnitude;
 		velocity += acc * Time.deltaTime;
 
 		// 1 meter per second
