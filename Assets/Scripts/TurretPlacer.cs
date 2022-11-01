@@ -1,14 +1,23 @@
+using System;
 using UnityEngine;
 
 public class TurretPlacer : MonoBehaviour {
 
 	public Transform turret;
 
-	float pitchDeg;
-	float yawDeg;
 
+	[Header( "Mouse look" )]
 	public float mouseSensitivity = 1;
 	public float turretYawSensitivity = 6;
+
+	[Header( "Movement" )]
+	public float playerAccMagnitude = 400; // meters per second^2
+	public float drag = 1.6f;
+
+	// internal state
+	Vector3 vel, acc;
+	float pitchDeg;
+	float yawDeg;
 	float turretYawOffsetDeg;
 
 	void Awake() {
@@ -24,10 +33,40 @@ public class TurretPlacer : MonoBehaviour {
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
 		}
-		UpdateTurretYawInput();
+		UpdateMovement();
 		UpdateMouseLook();
+		UpdateTurretYawInput();
 		PlaceTurret();
 	}
+
+	void UpdateMovement() {
+		// local function
+		void TestInput( KeyCode key, Vector3 dir ) {
+			if( Input.GetKey( key ) )
+				acc += dir;
+		}
+
+		acc = Vector3.zero;
+		TestInput( KeyCode.W, transform.forward );
+		TestInput( KeyCode.S, -transform.forward );
+		TestInput( KeyCode.A, -transform.right );
+		TestInput( KeyCode.D, transform.right );
+		TestInput( KeyCode.Space, Vector3.up );
+		TestInput( KeyCode.LeftControl, Vector3.down );
+
+		if( acc != Vector3.zero )
+			acc = acc.normalized * playerAccMagnitude;
+		vel += acc * Time.deltaTime;
+
+		// 1 meter per second
+		float dt = Time.deltaTime;
+		transform.position += vel * dt;
+	}
+
+	void FixedUpdate() {
+		vel /= drag; // movement dampening
+	}
+
 
 	void UpdateTurretYawInput() {
 		float scrollDelta = Input.mouseScrollDelta.y;
