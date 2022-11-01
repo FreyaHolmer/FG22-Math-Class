@@ -1,11 +1,19 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 public class MathTrigger : MonoBehaviour {
 
+	public enum Shape {
+		Wedge,
+		Spherical,
+		SphericalSector
+	}
+
 	public Transform target;
 
+	public Shape shape;
 	[FormerlySerializedAs( "radius" )]
 	public float radiusOuter = 1;
 	public float radiusInner = 1;
@@ -21,6 +29,22 @@ public class MathTrigger : MonoBehaviour {
 		Gizmos.matrix = Handles.matrix = transform.localToWorldMatrix;
 		Gizmos.color = Handles.color = Contains( target.position ) ? Color.white : Color.red;
 
+		switch( shape ) {
+			case Shape.Wedge:
+				DrawWedgeGizmo();
+				break;
+			case Shape.Spherical:
+				DrawSphereGizmo();
+				break;
+		}
+	}
+
+	void DrawSphereGizmo() {
+		Gizmos.DrawWireSphere( default, radiusInner );
+		Gizmos.DrawWireSphere( default, radiusOuter );
+	}
+
+	void DrawWedgeGizmo() {
 		Vector3 top = new Vector3( 0, height, 0 );
 
 		float p = AngThresh;
@@ -50,7 +74,19 @@ public class MathTrigger : MonoBehaviour {
 		Gizmos.DrawLine( vRightOuter, top + vRightOuter );
 	}
 
-	public bool Contains( Vector3 position ) {
+	public bool Contains( Vector3 position ) =>
+		shape switch {
+			Shape.Wedge     => WedgeContains( position ),
+			Shape.Spherical => SphereContains( position ),
+			_               => throw new NotImplementedException()
+		};
+
+	public bool SphereContains( Vector3 position ) {
+		float distance = Vector3.Distance( transform.position, position );
+		return distance >= radiusInner && distance <= radiusOuter;
+	}
+
+	public bool WedgeContains( Vector3 position ) {
 		Vector3 vecToTargetWorld = position - transform.position;
 
 		// inverse transform is world to local
