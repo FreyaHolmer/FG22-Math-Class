@@ -3,7 +3,7 @@ using UnityEngine;
 public class Turret : MonoBehaviour {
 
 	public Transform target;
-	public WedgeTrigger trigger;
+	public MathTrigger trigger;
 	public Transform gunTf;
 	public float smoothingFactor = 1;
 

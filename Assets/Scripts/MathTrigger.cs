@@ -1,11 +1,14 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class MathTrigger : MonoBehaviour {
 
 	public Transform target;
 
-	public float radius = 1;
+	[FormerlySerializedAs( "radius" )]
+	public float radiusOuter = 1;
+	public float radiusInner = 1;
 	public float height = 1;
 	[Range( 0, 180 )]
 	public float fovDeg = 45;
@@ -23,20 +26,28 @@ public class MathTrigger : MonoBehaviour {
 		float p = AngThresh;
 		float x = Mathf.Sqrt( 1 - p * p );
 
-		Vector3 vLeft = new Vector3( -x, 0, p ) * radius;
-		Vector3 vRight = new Vector3( x, 0, p ) * radius;
+		Vector3 vLeftDir = new Vector3( -x, 0, p );
+		Vector3 vRightDir = new Vector3( x, 0, p );
+		Vector3 vLeftOuter = vLeftDir * radiusOuter;
+		Vector3 vRightOuter = vRightDir * radiusOuter;
+		Vector3 vLeftInner = vLeftDir * radiusInner;
+		Vector3 vRightInner = vRightDir * radiusInner;
 
-		Handles.DrawWireArc( default, Vector3.up, vLeft, fovDeg, radius );
-		Handles.DrawWireArc( top, Vector3.up, vLeft, fovDeg, radius );
+		Handles.DrawWireArc( default, Vector3.up, vLeftOuter, fovDeg, radiusOuter );
+		Handles.DrawWireArc( top, Vector3.up, vLeftOuter, fovDeg, radiusOuter );
 
-		Gizmos.DrawRay( default, vLeft );
-		Gizmos.DrawRay( default, vRight );
-		Gizmos.DrawRay( top, vLeft );
-		Gizmos.DrawRay( top, vRight );
+		Handles.DrawWireArc( default, Vector3.up, vLeftInner, fovDeg, radiusInner );
+		Handles.DrawWireArc( top, Vector3.up, vLeftInner, fovDeg, radiusInner );
 
-		Gizmos.DrawLine( default, top );
-		Gizmos.DrawLine( vLeft, top + vLeft );
-		Gizmos.DrawLine( vRight, top + vRight );
+		Gizmos.DrawLine( vLeftInner, vLeftOuter );
+		Gizmos.DrawLine( vRightInner, vRightOuter );
+		Gizmos.DrawLine( top + vLeftInner, top + vLeftOuter );
+		Gizmos.DrawLine( top + vRightInner, top + vRightOuter );
+
+		Gizmos.DrawLine( vLeftInner, top + vLeftInner );
+		Gizmos.DrawLine( vRightInner, top + vRightInner );
+		Gizmos.DrawLine( vLeftOuter, top + vLeftOuter );
+		Gizmos.DrawLine( vRightOuter, top + vRightOuter );
 	}
 
 	public bool Contains( Vector3 position ) {
@@ -58,7 +69,7 @@ public class MathTrigger : MonoBehaviour {
 			return false; // outside the angular wedge
 
 		// cylindrical radial test
-		if( flatDistance > radius )
+		if( flatDistance > radiusOuter || flatDistance < radiusInner )
 			return false; // outside the infinite cylinder
 
 		// we're inside!
