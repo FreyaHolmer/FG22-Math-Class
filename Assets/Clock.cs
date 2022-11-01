@@ -72,4 +72,6 @@ public class Clock : MonoBehaviour {
 			Mathf.Sin( angleRad )
 		);
 
+	static float DirToAng( Vector2 v ) => Mathf.Atan2( v.y, v.x );
+
 }
