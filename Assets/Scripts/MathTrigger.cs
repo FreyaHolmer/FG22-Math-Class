@@ -25,12 +25,6 @@ public class MathTrigger : MonoBehaviour {
 
 		Vector3 vLeft = new Vector3( -x, 0, p ) * radius;
 		Vector3 vRight = new Vector3( x, 0, p ) * radius;
-		
-		Quaternion rotA = Quaternion.Euler( 90, 90, 45 );
-		Quaternion rotB = Quaternion.AngleAxis( 60, Vector3.right );
-		Quaternion rotCombined = rotA * rotB; // Combined rotation
-		Quaternion rotInverse = Quaternion.Inverse( rotCombined );
-		Vector3 rotateVector = rotInverse * vLeft;
 
 		Handles.DrawWireArc( default, Vector3.up, vLeft, fovDeg, radius );
 		Handles.DrawWireArc( top, Vector3.up, vLeft, fovDeg, radius );
