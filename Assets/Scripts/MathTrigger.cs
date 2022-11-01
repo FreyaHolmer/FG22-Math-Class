@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-public class WedgeTrigger : MonoBehaviour {
+public class MathTrigger : MonoBehaviour {
 
 	public Transform target;
 
