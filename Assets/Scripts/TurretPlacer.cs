@@ -8,6 +8,8 @@ public class TurretPlacer : MonoBehaviour {
 	float yawDeg;
 
 	public float mouseSensitivity = 1;
+	public float turretYawSensitivity = 6;
+	float turretYawOffsetDeg;
 
 	void Awake() {
 		Vector3 startEuler = transform.eulerAngles;
@@ -22,12 +24,20 @@ public class TurretPlacer : MonoBehaviour {
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
 		}
-			
+		UpdateTurretYawInput();
 		UpdateMouseLook();
 		PlaceTurret();
 	}
 
+	void UpdateTurretYawInput() {
+		float scrollDelta = Input.mouseScrollDelta.y;
+		turretYawOffsetDeg += scrollDelta * turretYawSensitivity;
+		turretYawOffsetDeg = Mathf.Clamp( turretYawOffsetDeg, -90, 90 );
+	}
+
 	void UpdateMouseLook() {
+		if( Cursor.lockState == CursorLockMode.None )
+			return;
 		float xDelta = Input.GetAxis( "Mouse X" );
 		float yDelta = Input.GetAxis( "Mouse Y" );
 		pitchDeg += -yDelta * mouseSensitivity;
@@ -43,7 +53,8 @@ public class TurretPlacer : MonoBehaviour {
 			Vector3 yAxis = hit.normal;
 			Vector3 zAxis = Vector3.Cross( transform.right, yAxis ).normalized;
 			Debug.DrawLine( ray.origin, hit.point, new Color( 1, 1, 1, 0.4f ) );
-			turret.rotation = Quaternion.LookRotation( zAxis, yAxis );
+			Quaternion offsetRot = Quaternion.Euler( 0, turretYawOffsetDeg, 0 );
+			turret.rotation = Quaternion.LookRotation( zAxis, yAxis ) * offsetRot;
 		}
 	}
 
