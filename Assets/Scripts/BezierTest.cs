@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class LerpTest : MonoBehaviour {
+public class BezierTest : MonoBehaviour {
 
 	[Range( 0f, 1f )]
 	public float t = 0;
