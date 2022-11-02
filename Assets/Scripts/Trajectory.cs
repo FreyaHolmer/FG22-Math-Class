@@ -10,7 +10,13 @@ public class Trajectory : MonoBehaviour {
 	Vector3 Vel => transform.right * launchSpeed;
 	Vector3 Acc => Physics.gravity;
 	public Rigidbody rb; // test object
-	void Awake() => rb.velocity = Vel;
+
+	void Awake() {
+		if( rb != null ) {
+			rb.position = Pos;
+			rb.velocity = Vel;
+		}
+	}
 
 	List<Vector3> drawPts = new List<Vector3>();
 
@@ -22,13 +28,12 @@ public class Trajectory : MonoBehaviour {
 			float time = t * drawDuration;
 			drawPts.Add( GetPoint( time ) );
 		}
-		
-		for( int i = 0; i < DETAIL-1; i++ ) // draw lines (connect the samples)
-			Gizmos.DrawLine( drawPts[i], drawPts[i+1] );
-		
+
+		for( int i = 0; i < DETAIL - 1; i++ ) // draw lines (connect the samples)
+			Gizmos.DrawLine( drawPts[i], drawPts[i + 1] );
 	}
 
 	public Vector3 GetPoint( float t ) => Pos + Vel * t + ( Acc / 2 ) * t * t;
-
+	public Vector3 GetVelocity( float t ) => Vel + Acc * t;
 
 }
