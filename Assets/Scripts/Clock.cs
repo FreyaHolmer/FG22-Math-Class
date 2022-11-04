@@ -59,19 +59,8 @@ public class Clock : MonoBehaviour {
 	}
 
 	Vector2 FractionToClockDir( float t ) {
-		float angleRad = ( 0.25f - t ) * TAU;
-		return AngToDir( angleRad );
+		float angleRad = ( 0.25f - t ) * MathFG.TAU;
+		return MathFG.AngToDir( angleRad );
 	}
-
-	// math utilities
-	const float TAU = 6.28318530718f;
-
-	static Vector2 AngToDir( float angleRad ) =>
-		new Vector2(
-			Mathf.Cos( angleRad ),
-			Mathf.Sin( angleRad )
-		);
-
-	static float DirToAng( Vector2 v ) => Mathf.Atan2( v.y, v.x );
 
 }
