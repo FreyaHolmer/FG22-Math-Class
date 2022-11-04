@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,19 +5,17 @@ public class BezierMesh : MonoBehaviour {
 
 	Mesh mesh;
 
-	[Range( 0, 1 )]
-	public float tTest;
-
 	public Vector3 profilePtA = new Vector3( 0, 0, -1 );
 	public Vector3 profilePtB = new Vector3( 0, 0, +1 );
 
 	public int segmentCount;
 	public int VertexCount => 2 * ( segmentCount + 1 );
+	public int TriangleCount => segmentCount * 2;
 
 	void OnValidate() {
 		segmentCount = Mathf.Max( 1, segmentCount ); // make sure it's always greater than 1
 	}
-	
+
 	List<Vector3> verts = new List<Vector3>();
 	List<Vector3> normals = new List<Vector3>();
 	List<int> triangles = new List<int>();
@@ -36,7 +33,7 @@ public class BezierMesh : MonoBehaviour {
 		verts.Clear();
 		normals.Clear();
 		triangles.Clear();
-		
+
 		// defining vertices
 		for( int i = 0; i < segmentCount + 1; i++ ) {
 			float t = i / (float)segmentCount;
